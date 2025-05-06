@@ -1,6 +1,7 @@
 #include "HandleEvents.hpp"
 
-void handleEvents(bool& gameloop, std::vector<button>& buttons) {
+
+void handleEvents(bool& gameloop, std::vector<button>& buttons, SDL_Renderer* renderer) {
 	//Event listener
 	SDL_Event e;
 
@@ -29,14 +30,16 @@ void handleEvents(bool& gameloop, std::vector<button>& buttons) {
 						but.func();
 					}
 				}
-			}break;
+			}
+			break;
 
 		// LMB release mechanics
 		case SDL_MOUSEBUTTONUP:
 			//Unset pressed state for all buttons
 			if (e.button.button == SDL_BUTTON_LEFT) {
 				for (auto& but : buttons) {but.pressed = false;}
-			}break;
+			}
+			break;
 
 		//Mouse movement mechanics
 		case SDL_MOUSEMOTION:
@@ -44,7 +47,14 @@ void handleEvents(bool& gameloop, std::vector<button>& buttons) {
 			for (auto& but : buttons) {
 				if (but.click_test({ (float)e.motion.x, (float)e.motion.y }, false)) but.hover = true;
 				else but.hover = false;
-			}break;
+			}
+			break;
+
+		//Window event mechanics
+		case SDL_WINDOWEVENT:
+			//Updates window width and height on resize
+			if (e.window.event == SDL_WINDOWEVENT_RESIZED) SDL_GetRendererOutputSize(renderer, &window_width, &window_height);
+			break;
 		}
 	}
 }
