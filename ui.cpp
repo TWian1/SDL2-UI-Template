@@ -10,8 +10,8 @@ void textBox::updateTexture() {
 }
 
 //Initialization function which sets new font size and updates the texture
-textBox::textBox(SDL_Renderer* renderer, TTF_Font* font, std::string fontPath, float x, float y, std::string text,SDL_Color textColor, SDL_Color backgroundColor, int font_size)
-	: renderer(renderer), font(font), x(x), y(y), text(text), textColor(textColor), backgroundColor(backgroundColor), font_size(font_size), fontPath(fontPath){
+textBox::textBox(SDL_Renderer* renderer, std::string id, TTF_Font* font, std::string fontPath, float x, float y, std::string text,SDL_Color textColor, SDL_Color backgroundColor, int font_size)
+	: renderer(renderer), font(font), x(x), y(y), text(text), textColor(textColor), backgroundColor(backgroundColor), font_size(font_size), fontPath(fontPath), id(id){
 	if (font_size != -1) {
 		TTF_Font* newFont = TTF_OpenFont(fontPath.c_str(), font_size);
 		if (newFont) this->font = newFont;
@@ -36,10 +36,9 @@ void textBox::Render() {
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 
-
 //Initialization function centers textbox in button
-button::button(std::function<void()> func, std::string text, TTF_Font* font, float x, float y, SDL_Renderer* renderer, float w, float h, int font_size, SDL_Color default_color, SDL_Color hover_color, SDL_Color pressed_color, SDL_Color text_color)
-	: func(func), x(x), y(y), w(w), h(h), default_color(default_color), hover_color(hover_color), pressed_color(pressed_color), font(font), renderer(renderer), textbox(renderer, font, "OpenSans-ExtraBold.ttf", x, y, text, text_color, { 0, 0, 0, 0 }, font_size) {
+button::button(std::function<void()> func, SDL_Renderer* renderer, std::string id, std::string text, TTF_Font* font, float x, float y, float w, float h, int font_size, SDL_Color default_color, SDL_Color hover_color, SDL_Color pressed_color, SDL_Color text_color)
+	: func(func), x(x), y(y), w(w), h(h), default_color(default_color), hover_color(hover_color), pressed_color(pressed_color), id(id), font(font), renderer(renderer), textbox(renderer, id+"_Text", font, "OpenSans-ExtraBold.ttf", x, y, text, text_color, {0, 0, 0, 0}, font_size) {
 	textbox.x = x + (w - textbox.rect.w) / 2;
 	textbox.y = y + (h - textbox.rect.h) / 2;
 	textbox.rect.x = (int)textbox.x;
@@ -67,4 +66,10 @@ void button::Render() {
 	else SDL_SetRenderDrawColor(renderer, pressed_color.r, pressed_color.g, pressed_color.b, pressed_color.a);
 	SDL_RenderFillRect(renderer, &rect);
 	textbox.Render();
+}
+
+// Renders all UI in vectors
+void renderUI(std::vector<textBox>& textBoxes, std::vector<button>& buttons){
+	for (auto& but : buttons) { but.Render(); }
+	for (auto& tex : textBoxes) { tex.Render(); }
 }
