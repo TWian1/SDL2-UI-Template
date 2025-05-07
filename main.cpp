@@ -10,14 +10,12 @@
 #undef main // SDL breaks without this for some reason
 using namespace std;
 
-int window_width = 1920;
-int window_height = 1080;
+int window_width = 1920, window_height = 1080;
 
 // Function that is called by the button
-void print(int& Generation, textBox& gentext) {
+void print(int& Generation, textBox* gentext) {
 	Generation++;
-	gentext.setText("Generation " + to_string(Generation));
-	return;
+	gentext->setText("Generation " + to_string(Generation));
 }
 
 //Main function
@@ -66,24 +64,18 @@ int main() {
 	bool gameloop = true;
 	vector<button> buttons;
 	vector<textBox> textBoxes;
-	srand(time(NULL));
-	Uint64 NOW = SDL_GetPerformanceCounter();
-	Uint64 LAST = 0;
+	Uint64 NOW = SDL_GetPerformanceCounter(), LAST = 0;
 	double deltaTime = 0;
 
 	int Generation = 0;
-	textBox fps_counter(renderer, font, "OpenSans-ExtraBold.ttf", 5, 5, "FPS: 0", { 255, 255, 255, 255 }, { 0, 0, 0, 0 }, 20);
-	textBoxes.push_back(fps_counter);
-
-	textBox tex1(renderer, font, "OpenSans-ExtraBold.ttf", 15, 1005, "Generation 0", { 255, 255, 255, 255 }, { 0, 0, 0, 0 }, 50);
-	textBoxes.push_back(tex1);
-
-	button but1([&]() { print(Generation, textBoxes[1]); }, "TEST", font, 1700, 970, renderer, 150.0, 75.0, 45, { 255, 66, 66, 255 }, { 255, 88, 88, 255 }, { 255, 125, 125, 255 }, { 255, 255, 255, 255 });
-	buttons.push_back(but1);
+	textBoxes.push_back(textBox(renderer, "FPS_Counter", font, "OpenSans-ExtraBold.ttf", 5, 5, "FPS: 0", {255, 255, 255, 255}, {0, 0, 0, 0}, 20));
+	textBoxes.push_back(textBox(renderer, "Gen_Text", font, "OpenSans-ExtraBold.ttf", 15, 1005, "Generation 0", { 255, 255, 255, 255 }, { 0, 0, 0, 0 }, 50));
+	buttons.push_back(button([&]() { print(Generation, getObjectById(textBoxes, "Gen_Text")); }, renderer, "Generation_Button", "TEST", font,
+		1700, 970, 150.0, 75.0, 45, { 255, 66, 66, 255 }, { 255, 88, 88, 255 }, { 255, 125, 125, 255 }, { 255, 255, 255, 255 }));
 
 	// Main Game Loop
 	while (gameloop) {
-		//FPS calc
+		//Deltatime calc
 		LAST = NOW;
 		NOW = SDL_GetPerformanceCounter();
 		deltaTime = (double)((NOW - LAST) * 1000) / SDL_GetPerformanceFrequency(); 
@@ -95,14 +87,11 @@ int main() {
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 
-		// Render buttons and text
-		for (auto& but : buttons) {but.Render();}
-		for (auto& tex : textBoxes) {tex.Render();}
-
 		//FPS Display 
 		if (((NOW / 10000) % 1000 < (LAST / 10000) % 1000)) textBoxes[0].setText("FPS: " + to_string((int)(1000.0 / deltaTime)));
 
-		//Display
+		//Render UI and Display
+		renderUI(textBoxes, buttons);
 		SDL_RenderPresent(renderer);
 	}
 
