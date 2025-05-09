@@ -97,9 +97,9 @@ void button::Render() {
 }
 
 // Renders all UI in vectors
-void renderUI(std::vector<textBox>& textBoxes, std::vector<button>& buttons, std::vector<ui_rect>& uirects, std::vector<ui_circle>& uicircles){
-	for (auto& cir : uicircles) { cir.Render(); }
-	for (auto& box : uirects) { box.Render(); }
-	for (auto& but : buttons) { but.Render(); }
-	for (auto& tex : textBoxes) { tex.Render(); }
+void renderUI(ui_elements& ui){
+	for (auto& cir : ui.circles) { cir.Render(); }
+	for (auto& box : ui.rects) { box.Render(); }
+	for (auto& but : ui.buttons) { but.Render(); }
+	for (auto& tex : ui.text) { tex.Render(); }
 }
