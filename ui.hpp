@@ -8,9 +8,8 @@
 #include <iostream>
 
 class ui_circle {
-private:
-	SDL_Renderer* renderer;
 public:
+	SDL_Renderer* renderer;
 	float x, y, r;
 	bool visible = true;
 	SDL_Color default_color;
@@ -70,12 +69,7 @@ public:
 	void Render();
 };
 
-struct ui_elements {
-	std::vector<button> buttons;
-	std::vector<textBox> text;
-	std::vector<ui_rect> rects;
-	std::vector<ui_circle> circles;
-};
+struct ui_elements {std::vector<button> buttons;std::vector<textBox> text;std::vector<ui_rect> rects;std::vector<ui_circle> circles;};
 
 template <typename T>
 T* getObjectById(std::vector<T>& objects, const std::string& id) {
