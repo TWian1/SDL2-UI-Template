@@ -64,14 +64,16 @@ int main() {
 	bool gameloop = true;
 	vector<button> buttons;
 	vector<textBox> textBoxes;
+	vector<ui_rect> uiRects;
+	vector<ui_circle> uicircles;
 	Uint64 NOW = SDL_GetPerformanceCounter(), LAST = 0;
 	double deltaTime = 0;
 
 	int Generation = 0;
-	textBoxes.push_back(textBox(renderer, "FPS_Counter", font, "OpenSans-ExtraBold.ttf", 5, 5, "FPS: 0", {255, 255, 255, 255}, {0, 0, 0, 0}, 20));
-	textBoxes.push_back(textBox(renderer, "Gen_Text", font, "OpenSans-ExtraBold.ttf", 15, 1005, "Generation 0", { 255, 255, 255, 255 }, { 0, 0, 0, 0 }, 50));
+	textBoxes.push_back(textBox(renderer, "FPS_Counter", font, "OpenSans-ExtraBold.ttf", 25, 25, "FPS: 0", {255, 255, 255, 255}, 20));
+	textBoxes.push_back(textBox(renderer, "Gen_Text", font, "OpenSans-ExtraBold.ttf", 25, 995, "Generation 0", { 255, 255, 255, 255 }, 50, { 0, 0, 0, 0 }, 15));
 	buttons.push_back(button([&]() { print(Generation, getObjectById(textBoxes, "Gen_Text")); }, renderer, "Generation_Button", "TEST", font,
-		1700, 970, 150.0, 75.0, 45, { 255, 66, 66, 255 }, { 255, 88, 88, 255 }, { 255, 125, 125, 255 }, { 255, 255, 255, 255 }));
+		1700, 970, 150.0, 75.0, 45, { 255, 66, 66, 255 }, { 255, 88, 88, 255 }, { 255, 125, 125, 255 }, { 255, 255, 255, 255 }, 12));
 
 	// Main Game Loop
 	while (gameloop) {
@@ -88,14 +90,12 @@ int main() {
 		SDL_RenderClear(renderer);
 
 		//FPS Display 
-		if (((NOW / 10000) % 1000 < (LAST / 10000) % 1000)) textBoxes[0].setText("FPS: " + to_string((int)(1000.0 / deltaTime)));
+		if (((NOW / 10000) % 1000 < (LAST / 10000) % 1000)) getObjectById(textBoxes, "FPS_Counter")->setText("FPS: " + to_string((int)(1000.0 / deltaTime)));
 
 		//Render UI and Display
-		renderUI(textBoxes, buttons);
+		renderUI(textBoxes, buttons, uiRects, uicircles);
 		SDL_RenderPresent(renderer);
 	}
-
-	// Quit the window
 	TTF_CloseFont(font);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
