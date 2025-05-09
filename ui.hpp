@@ -7,7 +7,6 @@
 #include <vector>
 #include <iostream>
 
-
 class ui_circle {
 private:
 	SDL_Renderer* renderer;
@@ -71,10 +70,11 @@ public:
 	void Render();
 };
 
+// Finds object in vector of classes by ID
 template <typename T>
 T* getObjectById(std::vector<T>& objects, const std::string& id) {
 	for (auto& obj : objects) if (obj.id == id) return &obj;
-	return nullptr;  // Return nullptr if no matching object is found
+	return nullptr;
 }
 
 void renderUI(std::vector<textBox>& textBoxes, std::vector<button>& buttons, std::vector<ui_rect>& uirects, std::vector<ui_circle>& uicircles);
