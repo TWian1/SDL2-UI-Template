@@ -70,11 +70,17 @@ public:
 	void Render();
 };
 
-// Finds object in vector of classes by ID
+struct ui_elements {
+	std::vector<button> buttons;
+	std::vector<textBox> text;
+	std::vector<ui_rect> rects;
+	std::vector<ui_circle> circles;
+};
+
 template <typename T>
 T* getObjectById(std::vector<T>& objects, const std::string& id) {
 	for (auto& obj : objects) if (obj.id == id) return &obj;
 	return nullptr;
 }
 
-void renderUI(std::vector<textBox>& textBoxes, std::vector<button>& buttons, std::vector<ui_rect>& uirects, std::vector<ui_circle>& uicircles);
+void renderUI(ui_elements& ui);
