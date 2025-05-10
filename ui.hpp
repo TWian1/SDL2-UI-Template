@@ -21,7 +21,7 @@ class ui_rect {
 private:
 	SDL_Renderer* renderer;
 	SDL_Rect rects[2];
-	std::vector<ui_circle*> circles = {nullptr, nullptr, nullptr, nullptr};
+	std::vector<ui_circle*> circles = { nullptr, nullptr, nullptr, nullptr };
 public:
 	float x, y, w, h, r;
 	bool visible = true;
@@ -58,18 +58,32 @@ private:
 public:
 	float x, y, w, h, r;
 	std::string id;
+	bool align_center;
 	bool hover = false, visible = true, clickable = true, pressed = false;
 	textBox textbox;
 	SDL_Color default_color, pressed_color, hover_color;
 	std::function<void()> func;
 	std::vector<button> buttons;
-	button(std::function<void()> func, SDL_Renderer* renderer, std::string id, std::string text, TTF_Font* font, float x, float y, float w = 100.0f, float h = 25.0f, int font_size = -1,
-		SDL_Color default_color = { 255, 255, 255, 255 }, SDL_Color hover_color = { 200, 200, 200, 255 }, SDL_Color pressed_color = { 100, 100, 100, 255 }, SDL_Color text_color = { 0, 0, 0, 255 }, float r = 0);
+	button(std::function<void()> func, SDL_Renderer* renderer, std::string id, std::string text, TTF_Font* font, std::string font_path, float x, float y, float w = 100.0f, float h = 25.0f, int font_size = -1,
+		SDL_Color default_color = { 255, 255, 255, 255 }, SDL_Color hover_color = { 200, 200, 200, 255 }, SDL_Color pressed_color = { 100, 100, 100, 255 }, SDL_Color text_color = { 0, 0, 0, 255 }, float r = 0, bool align_center = true);
 	bool click_test(vec2<float> MouseCoords, bool call = true);
+	void Render();
+	void setButtonText(const std::string& newText);
+};
+
+class textInput {
+public:
+	bool selected = false;
+	std::string default_text, typed = "", id;
+	std::function<void()> submit_func;
+	int maxchar;
+	button Button;
+	textInput(std::function<void()> submit_func, SDL_Renderer* renderer, std::string id, std::string default_text, TTF_Font* font, std::string font_path, float x, float y, float w = 100.0f, float h = 25.0f, int font_size = -1,
+		SDL_Color default_color = { 255, 255, 255, 255 }, SDL_Color selected_color = { 100, 100, 100, 255 }, SDL_Color text_color = { 0, 0, 0, 255 }, float r = 0, int maxchar = 0, bool align_center = true);
 	void Render();
 };
 
-struct ui_elements {std::vector<button> buttons;std::vector<textBox> text;std::vector<ui_rect> rects;std::vector<ui_circle> circles;};
+struct ui_elements { std::vector<button> buttons; std::vector<textBox> text; std::vector<ui_rect> rects; std::vector<ui_circle> circles; std::vector<textInput> inputs; };
 
 template <typename T>
 T* getObjectById(std::vector<T>& objects, const std::string& id) {
