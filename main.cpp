@@ -8,26 +8,25 @@
 #include "HandleEvents.hpp"
 #include "ui.hpp"
 #undef main // SDL breaks without this for some reason
-using namespace std;
 
 // Function that is called by the button
 void print(int& Generation, textBox* gentext) {
 	Generation++;
-	gentext->setText("Generation " + to_string(Generation));
+	gentext->setText("Generation " + std::to_string(Generation));
 }
 
 //Main function
 int main() {
 
 	//Initialize SDL and SDL_TTF and check for Errors
-	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) { cout << "SDL_Init Error: " << SDL_GetError() << endl; return 1; }
-	if (TTF_Init() != 0) { cout << "TTF_Init Error: " << TTF_GetError() << "\n"; SDL_Quit(); return 1; }
+	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) { std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl; return 1; }
+	if (TTF_Init() != 0) { std::cout << "TTF_Init Error: " << TTF_GetError() << std::endl; SDL_Quit(); return 1; }
 	SDL_Window* window = SDL_CreateWindow("help", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920, 1080, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-	if (renderer == nullptr) { cout << "SDL_CreateRenderer Error: " << SDL_GetError() << endl; SDL_DestroyWindow(window); SDL_Quit(); return 1; }
+	if (renderer == nullptr) { std::cout << "SDL_CreateRenderer Error: " << SDL_GetError() << std::endl; SDL_DestroyWindow(window); SDL_Quit(); return 1; }
 	TTF_Font* font = TTF_OpenFont("OpenSans-ExtraBold.ttf", 24);
 	TTF_Font* font2 = TTF_OpenFont("OpenSans.ttf", 24);
-	if (!font2 || !font) { cout << "TTF_OpenFont Error: " << TTF_GetError() << "\n"; SDL_DestroyRenderer(renderer); SDL_DestroyWindow(window); TTF_Quit(); SDL_Quit(); return 1; }
+	if (!font2 || !font) { std::cout << "TTF_OpenFont Error: " << TTF_GetError() << std::endl; SDL_DestroyRenderer(renderer); SDL_DestroyWindow(window); TTF_Quit(); SDL_Quit(); return 1; }
 
 	// Initialize all of the required variables
 	bool gameloop = true;
@@ -58,7 +57,7 @@ int main() {
 		SDL_RenderClear(renderer);
 
 		//FPS Display 
-		if (((NOW / 10000) % 1000 < (LAST / 10000) % 1000)) getObjectById(ui.text, "FPS_Counter")->setText("FPS: " + to_string((int)(1000.0 / deltaTime)));
+		if (((NOW / 10000) % 1000 < (LAST / 10000) % 1000)) getObjectById(ui.text, "FPS_Counter")->setText("FPS: " + std::to_string((int)(1000.0 / deltaTime)));
 
 		//Render UI and Display
 		renderUI(ui);
