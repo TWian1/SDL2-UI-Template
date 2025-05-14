@@ -45,7 +45,7 @@ public:
 	std::vector<textBox> textBoxes;
 	SDL_Color textColor, backgroundColor;
 	textBox(SDL_Renderer* renderer, std::string id, TTF_Font* font, std::string fontPath, float x, float y, std::string text,
-		SDL_Color textColor = { 0, 0, 0, 255 }, int font_size = -1, SDL_Color backgroundColor = { 0, 0, 0, 0 }, float r = 0);
+		SDL_Color textColor = { 0, 0, 0, 255 }, int font_size = -1, float r = 0);
 	void setText(const std::string& newText);
 	void Render();
 };
@@ -53,27 +53,25 @@ public:
 class button {
 private:
 	SDL_Renderer* renderer;
-	SDL_Rect rect;
 	TTF_Font* font;
+	void updateText();
 public:
 	float x, y, w, h, r;
 	std::string id;
-	bool align_center;
-	bool hover = false, visible = true, clickable = true, pressed = false;
+	bool align_c, hover = false, visible = true, clickable = true, pressed = false;
 	textBox textbox;
-	SDL_Color default_color, pressed_color, hover_color;
+	SDL_Color default_c, press_c, hover_c;
 	std::function<void()> func;
-	std::vector<button> buttons;
-	button(std::function<void()> func, SDL_Renderer* renderer, std::string id, std::string text, TTF_Font* font, std::string font_path, float x, float y, float w = 100.0f, float h = 25.0f, int font_size = -1,
-		SDL_Color default_color = { 255, 255, 255, 255 }, SDL_Color hover_color = { 200, 200, 200, 255 }, SDL_Color pressed_color = { 100, 100, 100, 255 }, SDL_Color text_color = { 0, 0, 0, 255 }, float r = 0, bool align_center = true);
-	bool click_test(vec2<float> MouseCoords, bool call = true);
+	button(std::function<void()> on_click_Function,SDL_Renderer* renderer,std::string button_id,std::string text,TTF_Font* font,std::string font_path,float x,float y,float w = 100.0f,float h = 25.0f,int font_size = -1,
+		SDL_Color default_color = {255,255,255,255},SDL_Color hover_color = {200,200,200,255},SDL_Color press_color = {100,100,100,255},SDL_Color text_color = {0,0,0,255}, float r = 0, bool align_center = true);
+	bool click_test(vec2<float> MouseCoords);
 	void Render();
-	void setButtonText(const std::string& newText);
+	void setText(const std::string& newText);
 };
 
 class textInput {
 public:
-	bool selected = false;
+	bool selected = false, editable = true, visible = true;
 	std::string default_text, typed = "", id;
 	std::function<void()> submit_func;
 	int maxchar;
