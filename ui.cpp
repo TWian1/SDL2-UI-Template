@@ -1,7 +1,6 @@
 #include "ui.hpp"
 
-
-// initialization function for circle
+// Initialization function for circle
 ui_circle::ui_circle(SDL_Renderer* renderer, float x, float y, float r, SDL_Color default_color) : renderer(renderer), x(x), y(y), r(r), default_color(default_color) {};
 
 // Renders circle to screen
@@ -11,14 +10,14 @@ void ui_circle::Render() {
 	for (int w = 0; w < r * 2; w++) for (int h = 0; h < r * 2; h++) if (((r - w) * (r - w) + (r - h) * (r - h)) <= (r * r)) SDL_RenderDrawPoint(renderer, static_cast<int>(x + (r - w)), static_cast<int>(y + (r - h)));
 }
 
-// Initialization function for ui_rect creates rects and circles
+// Initialization function for ui_rect 
 ui_rect::ui_rect(SDL_Renderer* renderer, float x, float y, float w, float h, float r, SDL_Color default_color) : renderer(renderer), x(x), y(y), w(w), h(h), r(r), default_color(default_color) {
 	rects[0] = { static_cast<int>(x), static_cast<int>(y + r), static_cast<int>(w), static_cast<int>(h - (2 * r)) };
 	rects[1] = { static_cast<int>(x + r), static_cast<int>(y), static_cast<int>(w - (2 * r)), static_cast<int>(h) };
 	for (int c = 0; c < 4; c++) circles[c] = new ui_circle(renderer, (x + r + ((static_cast<int>(c / 2)) * (w - (2 * r)))), (y + r + ((c % 2) * (h - (2 * r)))), r, default_color);
 }
 
-//Renders UI rect to the screen(2 rects and 4 circles)
+// Renders UI rect to the screen(2 rects and 4 circles)
 void ui_rect::Render() {
 	if (!visible) return;
 	SDL_SetRenderDrawColor(renderer, default_color.r, default_color.g, default_color.b, default_color.a);
@@ -26,7 +25,7 @@ void ui_rect::Render() {
 	for (auto c : circles) c->Render();
 }
 
-//Updated text and position
+// Update texture so that text is aligned and matches the text variable
 void textBox::updateTexture() {
 	if (texture) SDL_DestroyTexture(texture);
 	SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), textColor);
@@ -35,59 +34,48 @@ void textBox::updateTexture() {
 	SDL_FreeSurface(surface);
 }
 
-//Initialization function which sets new font size and updates the texture
-textBox::textBox(SDL_Renderer* renderer, std::string id, TTF_Font* font, std::string fontPath, float x, float y, std::string text, SDL_Color textColor, int font_size, SDL_Color backgroundColor, float r)
-	: renderer(renderer), font(font), x(x), y(y), text(text), textColor(textColor), backgroundColor(backgroundColor), font_size(font_size), fontPath(fontPath), id(id), r(r) {
-	if (font_size != -1) {
-		TTF_Font* newFont = TTF_OpenFont(fontPath.c_str(), font_size);
-		if (newFont) this->font = newFont;
-	}
+// Initialization function for Text Box
+textBox::textBox(SDL_Renderer* renderer, std::string id, TTF_Font* font, std::string fontPath, float x, float y, std::string text, SDL_Color textColor, int font_size, float r)
+	: renderer(renderer), font(font), x(x), y(y), text(text), textColor(textColor), font_size(font_size), fontPath(fontPath), id(id), r(r) {
+	if (font_size != -1) {this->font = TTF_OpenFont(fontPath.c_str(), font_size);}
 	updateTexture();
 }
 
-//Function for easier setting of text
+// Function that sets text and renders it
 void textBox::setText(const std::string& newText) {
 	text = newText;
 	updateTexture();
 }
 
-//Sets the button text so its aligned correctly
-void button::setButtonText(const std::string& newText) {
-	this->textbox.setText(newText);
-	if (align_center) this->textbox.x = x + (w - this->textbox.rect.w) / 2;
-	else this->textbox.x = x + 7;
-	this->textbox.rect.x = static_cast<int>(this->textbox.x);
-	this->textbox.y = y + (h - this->textbox.rect.h) / 2;
-	this->textbox.rect.y = static_cast<int>(this->textbox.y);
-}
-
-// Renders the finished product along with the background box to the screen
+// Renders the finished textBox product to the screen
 void textBox::Render() {
 	if (!texture || !visible) return;
-	if (backgroundColor.a > 0) {
-		ui_rect newrect(renderer, x, y, static_cast<float>(rect.w), static_cast<float>(rect.h), r, backgroundColor);
-		newrect.Render();
-	}
 	SDL_RenderCopy(renderer, texture, NULL, &rect);
 }
 
-//Initialization function centers textbox in button
-button::button(std::function<void()> func, SDL_Renderer* renderer, std::string id, std::string text, TTF_Font* font, std::string font_path, float x, float y, float w, float h, int font_size, SDL_Color default_color, SDL_Color hover_color, SDL_Color pressed_color, SDL_Color text_color, float r, bool align_center)
-	: func(func), x(x), y(y), w(w), h(h), default_color(default_color), hover_color(hover_color), pressed_color(pressed_color), id(id), font(font), renderer(renderer), align_center(align_center), textbox(renderer, id + "_Text", font, font_path, x, y, text, text_color, font_size), r(r) {
-	if (align_center) textbox.x = x + (w - textbox.rect.w) / 2;
+// Function that sets the text and renders it for a button object
+void button::setText(const std::string& newText) {
+	textbox.setText(newText);
+	updateText();
+}
+
+// Sets the button text so its aligned correctly
+void button::updateText() {
+	if (align_c) textbox.x = x + (w - textbox.rect.w) / 2;
 	else textbox.x = x + 7;
 	textbox.rect.x = static_cast<int>(textbox.x);
 	textbox.y = y + (h - textbox.rect.h) / 2;
 	textbox.rect.y = static_cast<int>(textbox.y);
 }
 
+// Initialization function for button
+button::button(std::function<void()> func,SDL_Renderer* renderer,std::string id,std::string text,TTF_Font* font,std::string font_p,float x,float y,float w,float h,int font_size,SDL_Color default_c,SDL_Color hover_c,SDL_Color press_c,SDL_Color text_c,float r,bool align_center): 
+func(func),x(x),y(y),w(w),h(h),default_c(default_c),hover_c(hover_c),press_c(press_c),id(id),font(font),renderer(renderer),align_c(align_center),textbox(renderer,id+"_Text",font,font_p,x,y,text,text_c,font_size),r(r){updateText();}
+
 // Checks to see if mouse position overlaps the bounding box of the button if so call function or return true
-bool button::click_test(vec2<float> MouseCoords, bool call) {
+bool button::click_test(vec2<float> MouseCoords) {
 	if (!clickable) return false;
-	if (MouseCoords.x > x && MouseCoords.x < x + w && MouseCoords.y > y && MouseCoords.y < y + h) {
-		if (call) func();
-		return true;
-	}
+	if (MouseCoords.x > x && MouseCoords.x < x + w && MouseCoords.y > y && MouseCoords.y < y + h) {return true;}
 	return false;
 }
 
@@ -95,12 +83,11 @@ bool button::click_test(vec2<float> MouseCoords, bool call) {
 void button::Render() {
 	if (!visible) return;
 	SDL_Color outcolor;
-	rect = { static_cast<int>(x), static_cast<int>(y), static_cast<int>(w), static_cast<int>(h) };
 	if (!pressed) {
-		if (hover) outcolor = hover_color;
-		else outcolor = default_color;
+		if (hover) outcolor = hover_c;
+		else outcolor = default_c;
 	}
-	else outcolor = pressed_color;
+	else outcolor = press_c;
 	if (outcolor.a > 0) {
 		ui_rect newrect(renderer, x, y, w, h, r, outcolor);
 		newrect.Render();
@@ -108,14 +95,17 @@ void button::Render() {
 	textbox.Render();
 }
 
-//Initialization Function for text input.
-textInput::textInput(std::function<void()> submit_func, SDL_Renderer* renderer, std::string id, std::string default_text, TTF_Font* font, std::string font_path, float x, float y, float w, float h, int font_size,SDL_Color default_color, SDL_Color selected_color, SDL_Color text_color, float r, int maxchar, bool align_center) : submit_func(submit_func), maxchar(maxchar), id(id),default_text(default_text), Button([&]() {}, renderer,
-	id + "_Button", default_text, font, font_path, x, y, w, h, font_size, default_color, default_color, selected_color, text_color, r, align_center) {}
+// Initialization Function for text input
+textInput::textInput(std::function<void()> submit_func, SDL_Renderer* renderer,std::string id,std::string default_text,TTF_Font* font, std::string font_path, float x, float y, float w, float h, int font_size,SDL_Color default_color, SDL_Color selected_color, SDL_Color text_color, float r, int maxchar, bool align_center) : 
+submit_func(submit_func), maxchar(maxchar), id(id),default_text(default_text), Button([&]() {}, renderer,id + "_Button", default_text, font, font_path, x, y, w, h, font_size, default_color, default_color, selected_color, text_color, r, align_center) {}
 
-//Renders the textInput
-void textInput::Render() { Button.Render(); }
+// Renders the textInput
+void textInput::Render() { 
+	if (!visible) return;
+	Button.Render(); 
+}
 
-// Renders all UI in vectors
+// Renders all UI in ui struct
 void renderUI(ui_elements& ui) {
 	for (auto& cir : ui.circles) { cir.Render(); }
 	for (auto& box : ui.rects) { box.Render(); }
