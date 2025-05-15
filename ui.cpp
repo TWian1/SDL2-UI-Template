@@ -28,6 +28,7 @@ void ui_rect::Render() {
 // Update texture so that text is aligned and matches the text variable
 void textBox::updateTexture() {
 	if (texture) SDL_DestroyTexture(texture);
+	if (text.size() == 0) return;
 	SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), textColor);
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
 	rect = { static_cast<int>(x), static_cast<int>(y), surface->w, surface->h };
