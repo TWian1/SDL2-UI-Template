@@ -1,7 +1,7 @@
 #include "ui.hpp"
 
 // Initialization function for circle
-ui_circle::ui_circle(SDL_Renderer* renderer, float x, float y, float r, SDL_Color default_color) : renderer(renderer), x(x), y(y), r(r), default_color(default_color) {};
+ui_circle::ui_circle(SDL_Renderer* renderer, std::string id, float x, float y, float r, SDL_Color default_color,int z) : renderer(renderer), id(id), x(x), y(y), r(r), z(z), default_color(default_color) {};
 
 // Renders circle to screen
 void ui_circle::Render() {
@@ -11,10 +11,10 @@ void ui_circle::Render() {
 }
 
 // Initialization function for ui_rect 
-ui_rect::ui_rect(SDL_Renderer* renderer, float x, float y, float w, float h, float r, SDL_Color default_color) : renderer(renderer), x(x), y(y), w(w), h(h), r(r), default_color(default_color) {
+ui_rect::ui_rect(SDL_Renderer* renderer, std::string id, float x, float y, float w, float h, float r, SDL_Color default_color,int z) : renderer(renderer), id(id), x(x), y(y), w(w), h(h), r(r), z(z), default_color(default_color) {
 	rects[0] = { static_cast<int>(x), static_cast<int>(y + r), static_cast<int>(w), static_cast<int>(h - (2 * r)) };
 	rects[1] = { static_cast<int>(x + r), static_cast<int>(y), static_cast<int>(w - (2 * r)), static_cast<int>(h) };
-	for (int c = 0; c < 4; c++) circles[c] = new ui_circle(renderer, (x + r + ((static_cast<int>(c / 2)) * (w - (2 * r)))), (y + r + ((c % 2) * (h - (2 * r)))), r, default_color);
+	for (int c = 0; c < 4; c++) circles[c] = new ui_circle(renderer, id+"_c"+std::to_string(c), (x + r + ((static_cast<int>(c / 2)) * (w - (2 * r)))), (y + r + ((c % 2) * (h - (2 * r)))), r, default_color, z);
 }
 
 // Renders UI rect to the screen(2 rects and 4 circles)
@@ -35,8 +35,8 @@ void textBox::updateTexture() {
 }
 
 // Initialization function for Text Box
-textBox::textBox(SDL_Renderer* renderer, std::string id, TTF_Font* font, std::string fontPath, float x, float y, std::string text, SDL_Color textColor, int font_size, float r)
-	: renderer(renderer), font(font), x(x), y(y), text(text), textColor(textColor), font_size(font_size), fontPath(fontPath), id(id), r(r) {
+textBox::textBox(SDL_Renderer* renderer, std::string id, TTF_Font* font, std::string fontPath, float x, float y, std::string text, SDL_Color textColor, int font_size, int z)
+	: renderer(renderer), font(font), x(x), y(y), z(z), text(text), textColor(textColor), font_size(font_size), fontPath(fontPath), id(id) {
 	if (font_size != -1) {this->font = TTF_OpenFont(fontPath.c_str(), font_size);}
 	updateTexture();
 }
@@ -69,8 +69,8 @@ void button::updateText() {
 }
 
 // Initialization function for button
-button::button(std::function<void()> func,SDL_Renderer* renderer,std::string id,std::string text,TTF_Font* font,std::string font_p,float x,float y,float w,float h,int font_size,SDL_Color default_c,SDL_Color hover_c,SDL_Color press_c,SDL_Color text_c,float r,bool align_center): 
-func(func),x(x),y(y),w(w),h(h),default_c(default_c),hover_c(hover_c),press_c(press_c),id(id),font(font),renderer(renderer),align_c(align_center),textbox(renderer,id+"_Text",font,font_p,x,y,text,text_c,font_size),r(r){updateText();}
+button::button(std::function<void()> func,SDL_Renderer* renderer,std::string id,std::string text,TTF_Font* font,std::string font_p,float x,float y,float w,float h,int font_size,SDL_Color default_c,SDL_Color hover_c,SDL_Color press_c,SDL_Color text_c,float r,bool align_center,int z): 
+func(func),x(x),y(y),w(w),h(h),default_c(default_c),hover_c(hover_c),press_c(press_c),id(id),font(font),renderer(renderer),z(z),align_c(align_center),textbox(renderer,id+"_Text",font,font_p,x,y,text,text_c,font_size, z),r(r){updateText();}
 
 // Checks to see if mouse position overlaps the bounding box of the button if so call function or return true
 bool button::click_test(vec2<float> MouseCoords) {
@@ -89,15 +89,15 @@ void button::Render() {
 	}
 	else outcolor = press_c;
 	if (outcolor.a > 0) {
-		ui_rect newrect(renderer, x, y, w, h, r, outcolor);
+		ui_rect newrect(renderer, id+"_rect", x, y, w, h, r, outcolor, z);
 		newrect.Render();
 	}
 	textbox.Render();
 }
 
 // Initialization Function for text input
-textInput::textInput(std::function<void()> submit_func, SDL_Renderer* renderer,std::string id,std::string default_text,TTF_Font* font, std::string font_path, float x, float y, float w, float h, int font_size,SDL_Color default_color, SDL_Color selected_color, SDL_Color text_color, float r, int maxchar, bool align_center) : 
-submit_func(submit_func), maxchar(maxchar), id(id),default_text(default_text), Button([&]() {}, renderer,id + "_Button", default_text, font, font_path, x, y, w, h, font_size, default_color, default_color, selected_color, text_color, r, align_center) {}
+textInput::textInput(std::function<void()> submit_func, SDL_Renderer* renderer,std::string id,std::string default_text,TTF_Font* font, std::string font_path, float x, float y, float w, float h, int font_size,SDL_Color default_color, SDL_Color selected_color, SDL_Color text_color, float r, int maxchar, bool align_center, int z) : 
+submit_func(submit_func), maxchar(maxchar), id(id),default_text(default_text), z(z), Button([&]() {}, renderer,id + "_Button", default_text, font, font_path, x, y, w, h, font_size, default_color, default_color, selected_color, text_color, r, align_center, z) {}
 
 // Renders the textInput
 void textInput::Render() { 
@@ -107,9 +107,14 @@ void textInput::Render() {
 
 // Renders all UI in ui struct
 void renderUI(ui_elements& ui) {
-	for (auto& cir : ui.circles) { cir.Render(); }
-	for (auto& box : ui.rects) { box.Render(); }
-	for (auto& but : ui.buttons) { but.Render(); }
-	for (auto& tex : ui.text) { tex.Render(); }
-	for (auto& inp : ui.inputs) { inp.Render(); }
+	for (
+		int z_render = -10; // Z minimum
+		z_render <= 10; // Z maxiumum
+		z_render++) {
+		for (auto& cir : ui.circles) { if (cir.z == z_render) cir.Render(); }
+		for (auto& box : ui.rects) { if (box.z == z_render) box.Render(); }
+		for (auto& but : ui.buttons) { if (but.z == z_render) but.Render(); }
+		for (auto& tex : ui.text) { if (tex.z == z_render) tex.Render(); }
+		for (auto& inp : ui.inputs) { if (inp.z == z_render) inp.Render(); }
+	}
 }
