@@ -41,7 +41,7 @@ int main() {
 	// UI Code
 	int Generation = 0;
 	ui.text.push_back(textBox(renderer, "FPS_Counter", font, font_path_1, 25, 25, "FPS: 0", { 255, 255, 255, 255 }, 20));
-	ui.text.push_back(textBox(renderer, "Gen_Text", font, font_path_1, 25, 995, "Generation 0", { 255, 255, 255, 255 }, 50, 15));
+	ui.text.push_back(textBox(renderer, "Gen_Text", font, font_path_1, 25, 995, "Generation 0", { 255, 255, 255, 255 }, 50));
 	ui.buttons.push_back(button([&]() { print(Generation, getObjectById(ui.text, "Gen_Text")); }, renderer, "Generation_Button", "TEST", font, font_path_1,
 		1700, 970, 150.0, 75.0, 45, { 255, 66, 66, 255 }, { 255, 88, 88, 255 }, { 255, 125, 125, 255 }, { 255, 255, 255, 255 }, 12));
 	ui.text.push_back(textBox(renderer, "outtext", font, font_path_1, 250, 250, " ", { 255,255,255,255 }));
