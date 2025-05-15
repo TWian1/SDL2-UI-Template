@@ -41,8 +41,7 @@ void handleEvents(bool& gameloop, ui_elements& ui, SDL_Renderer* renderer) {
 				for (auto& inp : ui.inputs) {
 					if (inp.selected && inp.typed.size() > 0) {
 						inp.typed.pop_back();
-						if (inp.typed.size() > 0) inp.Button.setText(inp.typed);
-						else inp.Button.setText(" ");
+						inp.Button.setText(inp.typed);
 					}
 				}
 				break;
@@ -56,8 +55,7 @@ void handleEvents(bool& gameloop, ui_elements& ui, SDL_Renderer* renderer) {
 			for (auto& inp : ui.inputs) {
 				if (inp.selected && (inp.maxchar == 0 || inp.typed.size() < inp.maxchar)) {
 					inp.typed += e.text.text;
-					if (inp.typed.size() > 0) inp.Button.setText(inp.typed);
-					else inp.Button.setText(" ");
+					inp.Button.setText(inp.typed);
 				}
 			}
 			break;
@@ -81,8 +79,8 @@ void handleEvents(bool& gameloop, ui_elements& ui, SDL_Renderer* renderer) {
 					if (inp.Button.click_test({ (float)e.motion.x, (float)e.motion.y })) {
 						inp.selected = true;
 						inp.Button.pressed = true;
-						if (inp.typed.size() > 0) inp.Button.setText(inp.typed);
-						else inp.Button.setText(" ");
+						inp.Button.setText(inp.typed);
+
 					}
 					else {
 						inp.selected = false;
